@@ -3,72 +3,19 @@ extern crate rustc_serialize;
 
 use std::thread;
 use std::time::Duration;
-use std::env::{self, VarError};
-use std::error::Error as StdError;
+use std::env;
 use std::str::FromStr;
-use std::num::ParseIntError;
-use rustc_serialize::json::{self, DecoderError};
+use rustc_serialize::json;
 use curl::http;
+
+mod error;
+pub use error::Error;
 
 const USER_AGENT:         &'static str = concat!("travis-after-all/", env!("CARGO_PKG_VERSION"));
 const TRAVIS_JOB_NUMBER : &'static str = "TRAVIS_JOB_NUMBER";
 const TRAVIS_BUILD_ID:    &'static str = "TRAVIS_BUILD_ID";
 const TRAVIS_API_URL:     &'static str = "https://api.travis-ci.org";
 const POLLING_INTERVAL:   &'static str = "LEADER_POLLING_INTERVAL";
-
-#[derive(Debug)]
-pub enum Error {
-    Generic(String),
-    NoMatrix,
-    NotLeader,
-    BuildNotFound,
-    FailedBuilds,
-}
-
-impl Error {
-    pub fn from_str(message: &str) -> Error {
-        Error::Generic(message.into())
-    }
-}
-
-impl std::fmt::Display for Error {
-    fn fmt(&self, f: &mut std::fmt::Formatter) -> Result<(), std::fmt::Error> {
-        std::fmt::Debug::fmt(self, f)
-    }
-}
-
-impl std::error::Error for Error {
-    fn description(&self) -> &str {
-        match *self {
-            Error::Generic(ref s) => s,
-            Error::NoMatrix => "No matrix found. Call `build_matrix` first.",
-            Error::NotLeader => "This build is not the leader",
-            Error::FailedBuilds => "Some builds failed",
-            Error::BuildNotFound => "This build does not exist",
-        }
-    }
-}
-
-impl From<VarError> for Error {
-    fn from(err: VarError) -> Error {
-        match err {
-            VarError::NotPresent => Error::Generic("Environment variable not present".into()),
-            VarError::NotUnicode(_) => Error::Generic("Environment variable not valid".into())
-        }
-    }
-}
-
-impl From<ParseIntError> for Error {
-    fn from(_err: ParseIntError) -> Error {
-        Error::Generic("Can't parse what should be an integer".into())
-    }
-}
-
-impl From<DecoderError> for Error {
-    fn from(err: DecoderError) -> Error {
-        Error::Generic(err.description().into())
-    }
-}
 
 pub struct Build {
     travis_api_url: String,

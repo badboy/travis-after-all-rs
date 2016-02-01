@@ -4,9 +4,10 @@ extern crate rustc_serialize;
 use std::thread;
 use std::time::Duration;
 use std::env::{self, VarError};
+use std::error::Error as StdError;
 use std::str::FromStr;
 use std::num::ParseIntError;
-use rustc_serialize::json;
+use rustc_serialize::json::{self, DecoderError};
 use curl::http;
 
 const USER_AGENT:         &'static str = concat!("travis-after-all/", env!("CARGO_PKG_VERSION"));
@@ -20,6 +21,7 @@ pub enum Error {
     Generic(String),
     NoMatrix,
     NotLeader,
+    BuildNotFound,
     FailedBuilds,
 }
 
@@ -42,6 +44,7 @@ impl std::error::Error for Error {
             Error::NoMatrix => "No matrix found. Call `build_matrix` first.",
             Error::NotLeader => "This build is not the leader",
             Error::FailedBuilds => "Some builds failed",
+            Error::BuildNotFound => "This build does not exist",
         }
     }
 }
@@ -61,12 +64,17 @@ impl From<ParseIntError> for Error {
     }
 }
 
+impl From<DecoderError> for Error {
+    fn from(err: DecoderError) -> Error {
+        Error::Generic(err.description().into())
+    }
+}
+
 pub struct Build {
     travis_api_url: String,
     build_id: String,
     job_number: String,
     polling_interval: u64,
-    matrix: Option<Matrix>,
 }
 
 #[derive(Debug, RustcDecodable, RustcEncodable)]
@@ -146,7 +154,6 @@ impl Build {
             build_id: build_id,
             job_number: job_number,
             polling_interval: polling_interval,
-            matrix: None,
         })
 
     }
@@ -155,10 +162,7 @@ impl Build {
         is_leader(&self.job_number)
     }
 
-    pub fn build_matrix(&mut self) -> &Matrix {
-        if self.matrix.is_some() {
-            return self.matrix.as_ref().unwrap();
-        }
+    pub fn build_matrix(&self) -> Result<Matrix, Error> {
         let url = format!("{}/builds/{}", self.travis_api_url, self.build_id);
         let res = http::handle()
             .get(url)
@@ -167,31 +171,39 @@ impl Build {
             .exec()
             .unwrap();
 
+        if res.get_code() == 404 {
+            return Err(Error::BuildNotFound);
+        }
+
         let body = String::from_utf8(res.move_body()).unwrap();
         println!("=== BODY ===");
         println!("{}", body);
         println!("");
         println!("=== /BODY ===");
-        self.matrix = Some(json::decode(&body).unwrap());
-        self.matrix.as_ref().unwrap()
+
+        Ok(try!(json::decode(&body)))
     }
 
     pub fn wait_for_others(&self) -> Result<(), Error> {
-        if self.matrix.is_none() {
-            return Err(Error::NoMatrix);
-        }
+        let mut matrix = None;
 
         if !self.is_leader() {
             return Err(Error::NotLeader)
         }
 
-        let matrix = self.matrix.as_ref().unwrap();
         let dur = Duration::new(self.polling_interval, 0);
-        while !matrix.others_finished() {
+        loop {
+            if matrix.is_none() {
+                matrix = Some(try!(self.build_matrix()));
+            }
+
+            if matrix.is_some() && matrix.as_ref().unwrap().others_finished() {
+                break;
+            }
             thread::sleep(dur);
         }
 
-        match matrix.others_succeeded() {
+        match matrix.unwrap().others_succeeded() {
             true => Ok(()),
             false => Err(Error::FailedBuilds)
         }

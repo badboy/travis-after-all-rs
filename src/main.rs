@@ -23,17 +23,19 @@ fn main() {
     {
         let matrix = config.build_matrix();
 
-        for build in matrix.builds() {
-            println!("== Build {}", build.id());
-            println!("Leader: {}", build.is_leader());
-            println!("Finished: {}", build.is_finished());
-            println!("Succeeded: {}", build.is_succeeded());
-            println!("==");
-            println!("");
+        if let Ok(matrix) = matrix {
+            for build in matrix.builds() {
+                println!("== Build {}", build.id());
+                println!("Leader: {}", build.is_leader());
+                println!("Finished: {}", build.is_finished());
+                println!("Succeeded: {}", build.is_succeeded());
+                println!("==");
+                println!("");
 
+            }
+            println!("Matrix all except master finished: {}", matrix.others_finished());
+            println!("Matrix all except master succeeded: {}", matrix.others_succeeded());
         }
-        println!("Matrix all except master finished: {}", matrix.others_finished());
-        println!("Matrix all except master succeeded: {}", matrix.others_succeeded());
     }
 
 

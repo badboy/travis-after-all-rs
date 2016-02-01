@@ -5,20 +5,26 @@ use std::error::Error as StdError;
 use std::num::ParseIntError;
 use rustc_serialize::json::DecoderError;
 
+/// All possible error cases
 #[derive(Debug)]
 pub enum Error {
+    /// A generic error, translated from another internal error
     Generic(String),
-    NoMatrix,
+    /// `wait_for_others` was called on a non-leader environment
     NotLeader,
+    /// The specified build was not found
     BuildNotFound,
+    /// All non-leader jobs finished, but at least one failed
     FailedBuilds,
 }
 
 impl Error {
+    /// Build an error from a string
     pub fn from_str(message: &str) -> Error {
         Error::from_string(message.into())
     }
 
+    /// Build an error from a string
     pub fn from_string(message: String) -> Error {
         Error::Generic(message)
     }
@@ -34,7 +40,6 @@ impl error::Error for Error {
     fn description(&self) -> &str {
         match *self {
             Error::Generic(ref s) => s,
-            Error::NoMatrix => "No matrix found. Call `build_matrix` first.",
             Error::NotLeader => "This build is not the leader",
             Error::FailedBuilds => "Some builds failed",
             Error::BuildNotFound => "This build does not exist",

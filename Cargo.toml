@@ -6,3 +6,7 @@ authors = ["Jan-Erik Rediger <janerik@fnordig.de>"]
 [dependencies]
 curl = "0.2.16"
 rustc-serialize = "0.3.16"
+
+[[bin]]
+name = "travis-after-all"
+doc = false

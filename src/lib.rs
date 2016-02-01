@@ -9,13 +9,11 @@ use std::num::ParseIntError;
 use rustc_serialize::json;
 use curl::http;
 
+const USER_AGENT:         &'static str = concat!("travis-after-all/", env!("CARGO_PKG_VERSION"));
 const TRAVIS_JOB_NUMBER : &'static str = "TRAVIS_JOB_NUMBER";
 const TRAVIS_BUILD_ID:    &'static str = "TRAVIS_BUILD_ID";
 const TRAVIS_API_URL:     &'static str = "https://api.travis-ci.org";
-const TRAVIS_TOKEN:       &'static str = "TRAVIS_TOKEN";
 const POLLING_INTERVAL:   &'static str = "LEADER_POLLING_INTERVAL";
-const GITHUB_TOKEN1:      &'static str = "GITHUB_TOKEN";
-const GITHUB_TOKEN2:      &'static str = "GH_TOKEN";
 
 #[derive(Debug)]
 pub enum Error {
@@ -65,8 +63,6 @@ pub struct Build {
     travis_api_url: String,
     build_id: String,
     job_number: String,
-    gh_token: String,
-    travis_token: Option<String>,
     polling_interval: u64,
     matrix: Option<Matrix>,
 }
@@ -115,11 +111,6 @@ impl Matrix {
     }
 }
 
-#[derive(RustcDecodable, RustcEncodable)]
-struct TokenFetcher {
-    github_token: String
-}
-
 pub fn is_leader(job: &str) -> bool {
     job.ends_with('1')
 }
@@ -128,41 +119,20 @@ impl Build {
     pub fn from_env() -> Result<Build, Error> {
         let build_id = try!(env::var(TRAVIS_BUILD_ID));
         let job_number = try!(env::var(TRAVIS_JOB_NUMBER));
-        let gh_token = match env::var(GITHUB_TOKEN1) {
-            Ok(token) => token,
-            Err(_) => try!(env::var(GITHUB_TOKEN2)),
-        };
 
         let polling_interval = match env::var(POLLING_INTERVAL) {
             Err(_) => 5,
             Ok(val) => try!(FromStr::from_str(&val))
         };
 
-        let travis_token = env::var(TRAVIS_TOKEN).ok();
-
         Ok(Build {
             travis_api_url: TRAVIS_API_URL.into(),
             build_id: build_id,
             job_number: job_number,
-            gh_token: gh_token,
-            travis_token: travis_token,
             polling_interval: polling_interval,
             matrix: None,
         })
 
-    }
-
-    pub fn get_token(&mut self) -> String { // }Result<&str, ()> {
-        let data = TokenFetcher { github_token: self.gh_token.clone() };
-        let data = json::encode(&data).unwrap();
-        let url = format!("{}/auth/github", self.travis_api_url);
-        let res = http::handle()
-            .post(url, &data)
-            .header("Content-Type", "application/json")
-            .exec()
-            .unwrap();
-
-        String::from_utf8(res.move_body()).unwrap()
     }
 
     pub fn is_leader(&self) -> bool {
@@ -174,12 +144,10 @@ impl Build {
             return self.matrix.as_ref().unwrap();
         }
         let url = format!("{}/builds/{}", self.travis_api_url, self.build_id);
-        let token = self.travis_token.clone().unwrap_or("foo".into());
         let res = http::handle()
             .get(url)
             .follow_redirects(true)
-            .header("Authorization", &format!("token {}", token))
-            .header("Content-Type", "application/json")
+            .header("User-Agent", USER_AGENT)
             .exec()
             .unwrap();
 

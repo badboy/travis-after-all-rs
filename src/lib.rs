@@ -20,6 +20,7 @@ pub enum Error {
     Generic(String),
     NoMatrix,
     NotLeader,
+    FailedBuilds,
 }
 
 impl Error {
@@ -39,7 +40,8 @@ impl std::error::Error for Error {
         match *self {
             Error::Generic(ref s) => s,
             Error::NoMatrix => "No matrix found. Call `build_matrix` first.",
-            Error::NotLeader => "This build is not the leader"
+            Error::NotLeader => "This build is not the leader",
+            Error::FailedBuilds => "Some builds failed",
         }
     }
 }
@@ -117,6 +119,12 @@ impl Matrix {
             .filter(|build| !build.is_leader())
             .all(|build| build.is_finished())
     }
+
+    pub fn others_succeeded(&self) -> bool {
+        self.matrix.iter()
+            .filter(|build| !build.is_leader())
+            .all(|build| build.is_succeeded())
+    }
 }
 
 pub fn is_leader(job: &str) -> bool {
@@ -183,7 +191,10 @@ impl Build {
             thread::sleep(dur);
         }
 
-        Ok(())
+        match matrix.others_succeeded() {
+            true => Ok(()),
+            false => Err(Error::FailedBuilds)
+        }
     }
 }
 

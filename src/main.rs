@@ -33,6 +33,7 @@ fn main() {
 
         }
         println!("Matrix all except master finished: {}", matrix.others_finished());
+        println!("Matrix all except master succeeded: {}", matrix.others_succeeded());
     }
 
 
@@ -41,6 +42,7 @@ fn main() {
     match config.wait_for_others() {
         Ok(()) => println!("Build finished. Now it's my time"),
         Err(Error::NotLeader) => println!("I'm not the leader. Bailing out."),
+        Err(Error::FailedBuilds) => println!("Some builds failed. Stopping here."),
         Err(e) => {
             println!("travis_after_all failed.");
             println!("");

@@ -15,6 +15,13 @@ travis-after-all is a workaround for this and allows to wait for all jobs and th
 command afterwards.
 This is a port of the original Python script: <https://github.com/dmakhno/travis_after_all>
 
+
+## [Documentation][]
+
+[Documentation is available online.][Documentation]
+
+[Documentation]: http://badboy.github.io/travis-after-all-rs
+
 ## CLI usage
 
 You need to add the following lines to your `.travis.yml`.

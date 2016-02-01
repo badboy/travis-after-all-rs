@@ -10,8 +10,7 @@ rust:
 
 before_script:
   - |
-      cargo install --git https://github.com/badboy/travis-after-all-rs &&
-      export PATH=$HOME/.cargo/bin/:$PATH
+      export PATH=$TRAVIS_BUILD_DIR/target/debug:$PATH:$PATH
 
 
 script:

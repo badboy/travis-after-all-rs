@@ -70,7 +70,7 @@ pub struct Build {
 #[derive(Debug, RustcDecodable, RustcEncodable)]
 pub struct MatrixElement {
     finished_at: Option<String>,
-    result: u32,
+    result: Option<u32>,
     number: String,
     id: u32,
 }
@@ -85,7 +85,15 @@ impl MatrixElement {
     }
 
     pub fn is_succeeded(&self) -> bool {
-        self.is_finished() && self.result == 0
+        if !self.is_finished() {
+           return false;
+        }
+
+        match self.result {
+            None => false,
+            Some(0) => true,
+            Some(_) => false,
+        }
     }
 
     pub fn is_finished(&self) -> bool {

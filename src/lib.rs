@@ -86,12 +86,17 @@ pub fn is_leader(job: &str) -> bool {
     job.ends_with('1')
 }
 
+fn env_var(varname: &str) -> Result<String, Error> {
+    env::var(varname)
+        .map_err(|_| Error::from_string(format!("Missing environment variable: {}", varname)))
+}
+
 impl Build {
     pub fn from_env() -> Result<Build, Error> {
-        let build_id = try!(env::var(TRAVIS_BUILD_ID));
-        let job_number = try!(env::var(TRAVIS_JOB_NUMBER));
+        let build_id = try!(env_var(TRAVIS_BUILD_ID));
+        let job_number = try!(env_var(TRAVIS_JOB_NUMBER));
 
-        let polling_interval = match env::var(POLLING_INTERVAL) {
+        let polling_interval = match env_var(POLLING_INTERVAL) {
             Err(_) => 5,
             Ok(val) => try!(FromStr::from_str(&val))
         };

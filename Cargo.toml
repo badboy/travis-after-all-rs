@@ -3,6 +3,16 @@ name = "travis-after-all"
 version = "0.1.0"
 authors = ["Jan-Erik Rediger <janerik@fnordig.de>"]
 
+keywords = ["travis", "ci", "hook"]
+description = "The missing `after_all_success` hook for Travis"
+
+license = "MIT"
+readme = "README.md"
+
+documentation = "http://badboy.github.io/travis-after-all-rs"
+homepage = "https://github.com/badboy/travis-after-all-rs"
+repository = "https://github.com/badboy/travis-after-all-rs"
+
 [dependencies]
 curl = "0.2.16"
 rustc-serialize = "0.3.16"

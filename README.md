@@ -1,5 +1,8 @@
 # travis-after-all
 
+[![Build Status](https://travis-ci.org/badboy/travis-after-all-rs.svg?branch=master)](https://travis-ci.org/badboy/travis-after-all-rs)
+[![crates.io](http://meritbadge.herokuapp.com/travis-after-all)](https://crates.io/crates/travis-after-all)
+
 Check that all jobs in a build matrix run and succeeded and launch a single task afterwards.
 
 Travis offers no way to launch a single task when all jobs in a build finish.

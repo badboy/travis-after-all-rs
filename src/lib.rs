@@ -185,25 +185,22 @@ impl Build {
     }
 
     pub fn wait_for_others(&self) -> Result<(), Error> {
-        let mut matrix = None;
-
         if !self.is_leader() {
             return Err(Error::NotLeader)
         }
 
         let dur = Duration::new(self.polling_interval, 0);
         loop {
-            if matrix.is_none() {
-                matrix = Some(try!(self.build_matrix()));
-            }
+            let matrix = try!(self.build_matrix());
 
-            if matrix.is_some() && matrix.as_ref().unwrap().others_finished() {
+            if matrix.others_finished() {
                 break;
             }
             thread::sleep(dur);
         }
 
-        match matrix.unwrap().others_succeeded() {
+        let matrix = try!(self.build_matrix());
+        match matrix.others_succeeded() {
             true => Ok(()),
             false => Err(Error::FailedBuilds)
         }

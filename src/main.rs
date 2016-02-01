@@ -19,7 +19,7 @@ fn human<T>(val: Result<T, Error>) -> T {
 }
 
 fn main() {
-    let mut config = human(Build::from_env());
+    let config = human(Build::from_env());
     {
         let matrix = config.build_matrix();
 

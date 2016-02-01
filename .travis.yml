@@ -19,3 +19,6 @@ script:
       cargo test
 after_success:
   - travis-after-all
+
+notifications:
+    email: false

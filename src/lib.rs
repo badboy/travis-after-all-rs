@@ -152,6 +152,10 @@ impl Build {
             .unwrap();
 
         let body = String::from_utf8(res.move_body()).unwrap();
+        println!("=== BODY ===");
+        println!("{}", body);
+        println!("");
+        println!("=== /BODY ===");
         self.matrix = Some(json::decode(&body).unwrap());
         self.matrix.as_ref().unwrap()
     }

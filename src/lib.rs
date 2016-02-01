@@ -72,12 +72,12 @@ pub struct MatrixElement {
     finished_at: Option<String>,
     result: Option<u32>,
     number: String,
-    id: u32,
+    id: Option<u32>,
 }
 
 impl MatrixElement {
     pub fn id(&self) -> u32 {
-        self.id
+        self.id.unwrap()
     }
 
     pub fn is_leader(&self) -> bool {

@@ -26,8 +26,14 @@ fn main() {
         println!("Waiting for others to finish");
         match config.wait_for_others() {
             Ok(()) => println!("Build finished. Now it's my time"),
-            Err(Error::NotLeader) => println!("I'm not the leader. Bailing out."),
-            Err(Error::FailedBuilds) => println!("Some builds failed. Stopping here."),
+            Err(Error::NotLeader) => {
+                println!("I'm not the leader. Bailing out.");
+                process::exit(3);
+            },
+            Err(Error::FailedBuilds) => {
+                println!("Some builds failed. Stopping here.");
+                process::exit(2);
+            },
             Err(e) => {
                 println!("travis_after_all failed.");
                 println!("");

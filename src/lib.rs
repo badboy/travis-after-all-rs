@@ -181,7 +181,7 @@ impl Build {
             return Err(Error::NoMatrix);
         }
 
-        if self.is_leader() {
+        if !self.is_leader() {
             return Err(Error::NotLeader)
         }
 

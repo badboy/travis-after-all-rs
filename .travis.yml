@@ -10,15 +10,23 @@ rust:
 
 before_script:
   - |
-      export PATH=$TRAVIS_BUILD_DIR/target/debug:$PATH:$PATH
-
+      pip install 'travis-cargo<0.2' --user &&
+      export PATH=$TRAVIS_BUILD_DIR/target/debug:$HOME/.local/bin:$PATH
 
 script:
   - |
-      cargo build &&
-      cargo test
+      travis-cargo build &&
+      travis-cargo test &&
+      travis-cargo --only stable doc
+
 after_success:
-  - travis-after-all
+  - travis-after-all && travis-cargo --only stable doc-upload
+
+env:
+  global:
+    - TRAVIS_CARGO_NIGHTLY_FEATURE="hasher"
+    - secure: "QCGyKbD6QaljV8ARytHNnCY7CjCVVMLrBd+pQ1Og1AfJOJIQpzgGr3oTxFNzhobDkllBGhCgCdZvD2/obFfDvZ4yZmZ2XR2ycvA7Sy8d1i4CBlDlbICmCXpnOyStEEfTdPG4KTcRWvsN7CU4f1+Tccab3pLWpI0TK+xCewKQpPJq7NSycPvIXS5kSM4g5cYtBDlt1qmCPNQxS/MY+Pb9Ywqd0E5CmEs6kz4dEiawEiK6nA/2cAiY5ohVgMjN3G6Fpgo1qONsRgpkYNd6JLtcTtwrvB/Cl8kzVGuRS74qmPj20WHee7TdpbLZcFofYikjxZowGn8+t4Qd1ouHhpVL3PdrwWKOOXY9Rw1JXC5kOXGuaO0LDGWI6yIJ1UlY8bocCk50Yym6Zdg0qJNrHpYH6T8crne7MgMgbevTYg2fL3gSbvUsumlokELeCPmetPmhSp8xCaFFsHhzzgglFJHTnrk6X8aEnV2aVGqiy8x8aGjhJQJL/hWfz7pW6S/8DdjF5jC2iqm9QVWCcmXpkqRGEkRGKSbKArW3eCSeJtS9wTbBFs2LWGaPuHIS1Jiit644KH6wkYx1hUS2hveh0Ly+cXndJyRFDYSDD6kyC+JNILGw3eOE7fkhD+OFjQm4a6VQGl5YgFDDdVn3slntlWeKhZh5QYqgWzjb9VLIxaAiaSc="
+
 
 notifications:
     email: false

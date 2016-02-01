@@ -176,11 +176,6 @@ impl Build {
         }
 
         let body = String::from_utf8(res.move_body()).unwrap();
-        println!("=== BODY ===");
-        println!("{}", body);
-        println!("");
-        println!("=== /BODY ===");
-
         Ok(try!(json::decode(&body)))
     }
 

@@ -1,0 +1,1 @@
+initSidebarItems({"enum":[["Error","All possible error cases"]],"struct":[["Build","The information of a full build"],["Matrix","A list of jobs"],["MatrixElement","A single job and relevant information"]]});

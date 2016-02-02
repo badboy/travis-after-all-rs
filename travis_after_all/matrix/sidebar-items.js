@@ -1,0 +1,1 @@
+initSidebarItems({"struct":[["Matrix","A list of jobs"],["MatrixElement","A single job and relevant information"]]});

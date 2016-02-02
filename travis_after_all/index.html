@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="generator" content="rustdoc">
+    <meta name="description" content="API documentation for the Rust `travis_after_all` crate.">
+    <meta name="keywords" content="rust, rustlang, rust-lang, travis_after_all">
+
+    <title>travis_after_all - Rust</title>
+
+    <link rel="stylesheet" type="text/css" href="../rustdoc.css">
+    <link rel="stylesheet" type="text/css" href="../main.css">
+
+    
+    
+</head>
+<body class="rustdoc">
+    <!--[if lte IE 8]>
+    <div class="warning">
+        This old browser is unsupported and will most likely display funky
+        things.
+    </div>
+    <![endif]-->
+
+    
+
+    <nav class="sidebar">
+        
+        <p class='location'></p><script>window.sidebarCurrent = {name: 'travis_after_all', ty: 'mod', relpath: '../'};</script>
+    </nav>
+
+    <nav class="sub">
+        <form class="search-form js-only">
+            <div class="search-container">
+                <input class="search-input" name="search"
+                       autocomplete="off"
+                       placeholder="Click or press ‘S’ to search, ‘?’ for more options…"
+                       type="search">
+            </div>
+        </form>
+    </nav>
+
+    <section id='main' class="content mod">
+<h1 class='fqn'><span class='in-band'>Crate <a class='mod' href=''>travis_after_all</a></span><span class='out-of-band'><span id='render-detail'>
+            <a id="toggle-all-docs" href="javascript:void(0)" title="collapse all docs">
+                [<span class='inner'>&#x2212;</span>]
+            </a>
+        </span><a id='src-0' class='srclink' href='../src/travis_after_all/lib.rs.html#1-158' title='goto source code'>[src]</a></span></h1>
+<div class='docblock'><p>Check that all jobs in a build matrix run and succeeded and launch a single task afterwards.</p>
+
+<p>Travis offers no way to launch a single task when all jobs in a build finish.
+Relevant issue: <a href="https://github.com/travis-ci/travis-ci/issues/929">https://github.com/travis-ci/travis-ci/issues/929</a></p>
+
+<p>Sometimes such a hook is necessary, for example to publish a new version of your project only once
+and only if all jobs succeed.</p>
+
+<p>travis-after-all is a workaround for this and allows to wait for all jobs and then run a
+command afterwards.
+This is a port of the original Python script: <a href="https://github.com/dmakhno/travis_after_all">https://github.com/dmakhno/travis_after_all</a></p>
+
+<h2 id='cli-usage' class='section-header'><a href='#cli-usage'>CLI usage</a></h2>
+<p>You need to add the following lines to your <code>.travis.yml</code>.
+This installs the tool and executes as an <code>after_success</code> hook:
+(It will only work for Rust projects as it depends on Cargo, the Rust package manager)</p>
+
+<pre><code class="language-yaml">before_script:
+  - |
+     export PATH=$HOME/.cargo/bin:$PATH:$PATH &amp;&amp;
+     cargo install --git https://github.com/badboy/travis-after-all-rs
+
+after_success:
+  - travis-after-all &amp;&amp; echo &quot;All fine, let&#39;s publish&quot;
+</code></pre>
+
+<h2 id='library-usage' class='section-header'><a href='#library-usage'>Library usage</a></h2>
+<p>You can use it as a library as well to build your own hooks:</p>
+<pre class='rust rust-example-rendered'>
+<span class='kw'>use</span> <span class='ident'>travis_after_all</span>::<span class='ident'>Build</span>;
+<span class='kw'>let</span> <span class='ident'>build_run</span> <span class='op'>=</span> <span class='ident'>Build</span>::<span class='ident'>from_env</span>().<span class='ident'>unwrap</span>();
+<span class='kw'>if</span> <span class='ident'>build_run</span>.<span class='ident'>is_leader</span>() {
+    <span class='kw'>let</span> _ <span class='op'>=</span> <span class='ident'>build_run</span>.<span class='ident'>wait_for_others</span>().<span class='ident'>unwrap</span>();
+    <span class='macro'>println</span><span class='macro'>!</span>(<span class='string'>&quot;Everything done. We can work here now.&quot;</span>);
+}</pre>
+</div><h2 id='structs' class='section-header'><a href="#structs">Structs</a></h2>
+<table>
+                    <tr class=' module-item'>
+                        <td><a class='struct' href='struct.Build.html'
+                               title='travis_after_all::Build'>Build</a></td>
+                        <td class='docblock short'>
+                             <p>The information of a full build</p>
+
+                        </td>
+                    </tr>
+                
+                    <tr class=' module-item'>
+                        <td><a class='struct' href='struct.Matrix.html'
+                               title='travis_after_all::Matrix'>Matrix</a></td>
+                        <td class='docblock short'>
+                             <p>A list of jobs</p>
+
+                        </td>
+                    </tr>
+                
+                    <tr class=' module-item'>
+                        <td><a class='struct' href='struct.MatrixElement.html'
+                               title='travis_after_all::MatrixElement'>MatrixElement</a></td>
+                        <td class='docblock short'>
+                             <p>A single job and relevant information</p>
+
+                        </td>
+                    </tr>
+                </table><h2 id='enums' class='section-header'><a href="#enums">Enums</a></h2>
+<table>
+                    <tr class=' module-item'>
+                        <td><a class='enum' href='enum.Error.html'
+                               title='travis_after_all::Error'>Error</a></td>
+                        <td class='docblock short'>
+                             <p>All possible error cases</p>
+
+                        </td>
+                    </tr>
+                </table></section>
+    <section id='search' class="content hidden"></section>
+
+    <section class="footer"></section>
+
+    <aside id="help" class="hidden">
+        <div>
+            <h1 class="hidden">Help</h1>
+
+            <div class="shortcuts">
+                <h2>Keyboard Shortcuts</h2>
+
+                <dl>
+                    <dt>?</dt>
+                    <dd>Show this help dialog</dd>
+                    <dt>S</dt>
+                    <dd>Focus the search field</dd>
+                    <dt>&larrb;</dt>
+                    <dd>Move up in search results</dd>
+                    <dt>&rarrb;</dt>
+                    <dd>Move down in search results</dd>
+                    <dt>&#9166;</dt>
+                    <dd>Go to active search result</dd>
+                </dl>
+            </div>
+
+            <div class="infos">
+                <h2>Search Tricks</h2>
+
+                <p>
+                    Prefix searches with a type followed by a colon (e.g.
+                    <code>fn:</code>) to restrict the search to a given type.
+                </p>
+
+                <p>
+                    Accepted types are: <code>fn</code>, <code>mod</code>,
+                    <code>struct</code>, <code>enum</code>,
+                    <code>trait</code>, <code>type</code>, <code>macro</code>,
+                    and <code>const</code>.
+                </p>
+
+                <p>
+                    Search functions by type signature (e.g.
+                    <code>vec -> usize</code>)
+                </p>
+            </div>
+        </div>
+    </aside>
+
+    
+
+    <script>
+        window.rootPath = "../";
+        window.currentCrate = "travis_after_all";
+        window.playgroundUrl = "";
+    </script>
+    <script src="../jquery.js"></script>
+    <script src="../main.js"></script>
+    
+    <script defer src="../search-index.js"></script>
+</body>
+</html>

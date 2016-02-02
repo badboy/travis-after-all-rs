@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="generator" content="rustdoc">
+    <meta name="description" content="API documentation for the Rust `Build` struct in crate `travis_after_all`.">
+    <meta name="keywords" content="rust, rustlang, rust-lang, Build">
+
+    <title>travis_after_all::Build - Rust</title>
+
+    <link rel="stylesheet" type="text/css" href="../rustdoc.css">
+    <link rel="stylesheet" type="text/css" href="../main.css">
+
+    
+    
+</head>
+<body class="rustdoc">
+    <!--[if lte IE 8]>
+    <div class="warning">
+        This old browser is unsupported and will most likely display funky
+        things.
+    </div>
+    <![endif]-->
+
+    
+
+    <nav class="sidebar">
+        
+        <p class='location'><a href='index.html'>travis_after_all</a></p><script>window.sidebarCurrent = {name: 'Build', ty: 'struct', relpath: ''};</script><script defer src="sidebar-items.js"></script>
+    </nav>
+
+    <nav class="sub">
+        <form class="search-form js-only">
+            <div class="search-container">
+                <input class="search-input" name="search"
+                       autocomplete="off"
+                       placeholder="Click or press ‘S’ to search, ‘?’ for more options…"
+                       type="search">
+            </div>
+        </form>
+    </nav>
+
+    <section id='main' class="content struct">
+<h1 class='fqn'><span class='in-band'>Struct <a href='index.html'>travis_after_all</a>::<wbr><a class='struct' href=''>Build</a></span><span class='out-of-band'><span id='render-detail'>
+            <a id="toggle-all-docs" href="javascript:void(0)" title="collapse all docs">
+                [<span class='inner'>&#x2212;</span>]
+            </a>
+        </span><a id='src-186' class='srclink' href='../src/travis_after_all/lib.rs.html#75-80' title='goto source code'>[src]</a></span></h1>
+<pre class='rust struct'>pub struct Build {
+    // some fields omitted
+}</pre><div class='docblock'><p>The information of a full build</p>
+</div><h2 id='methods'>Methods</h2><h3 class='impl'><code>impl <a class='struct' href='../travis_after_all/struct.Build.html' title='travis_after_all::Build'>Build</a></code></h3><div class='impl-items'><h4 id='method.from_env' class='method'><code>fn <a href='#method.from_env' class='fnname'>from_env</a>() -&gt; <a class='enum' href='https://doc.rust-lang.org/nightly/core/result/enum.Result.html' title='core::result::Result'>Result</a>&lt;<a class='struct' href='../travis_after_all/struct.Build.html' title='travis_after_all::Build'>Build</a>, <a class='enum' href='../travis_after_all/enum.Error.html' title='travis_after_all::Error'>Error</a>&gt;</code></h4>
+<div class='docblock'><p>Fetch the relevant information from the environment</p>
+
+<p>This reads the environment variables <code>TRAVIS_BUILD_ID</code> and <code>TRAVIS_JOB_NUMBER</code>,
+which are automatically set by Travis.</p>
+
+<p>It also reads the variable <code>POLLING_INTERVAL</code> with a default of 5.
+Set it to a higher value for a longer timeout.</p>
+</div><h4 id='method.is_leader' class='method'><code>fn <a href='#method.is_leader' class='fnname'>is_leader</a>(&amp;self) -&gt; <a class='primitive' href='https://doc.rust-lang.org/nightly/std/primitive.bool.html'>bool</a></code></h4>
+<div class='docblock'><p>Whether or not the current environment is the build leader</p>
+</div><h4 id='method.build_matrix' class='method'><code>fn <a href='#method.build_matrix' class='fnname'>build_matrix</a>(&amp;self) -&gt; <a class='enum' href='https://doc.rust-lang.org/nightly/core/result/enum.Result.html' title='core::result::Result'>Result</a>&lt;<a class='struct' href='../travis_after_all/struct.Matrix.html' title='travis_after_all::Matrix'>Matrix</a>, <a class='enum' href='../travis_after_all/enum.Error.html' title='travis_after_all::Error'>Error</a>&gt;</code></h4>
+<div class='docblock'><p>Fetch the build matrix for the current build</p>
+</div><h4 id='method.wait_for_others' class='method'><code>fn <a href='#method.wait_for_others' class='fnname'>wait_for_others</a>(&amp;self) -&gt; <a class='enum' href='https://doc.rust-lang.org/nightly/core/result/enum.Result.html' title='core::result::Result'>Result</a>&lt;<a class='primitive' href='https://doc.rust-lang.org/nightly/std/primitive.tuple.html'>()</a>, <a class='enum' href='../travis_after_all/enum.Error.html' title='travis_after_all::Error'>Error</a>&gt;</code></h4>
+<div class='docblock'><p>Wait for all non-leader jobs to finish</p>
+
+<p>Returns an <code>Error::BuildNotFound</code> if this build is not known to Travis.
+Returns an <code>Error::FailedBuilds</code> if at least one non-leader build failed.</p>
+
+<p>This loops until it fails or succeeds, there is no way to exit the loop.</p>
+</div></div></section>
+    <section id='search' class="content hidden"></section>
+
+    <section class="footer"></section>
+
+    <aside id="help" class="hidden">
+        <div>
+            <h1 class="hidden">Help</h1>
+
+            <div class="shortcuts">
+                <h2>Keyboard Shortcuts</h2>
+
+                <dl>
+                    <dt>?</dt>
+                    <dd>Show this help dialog</dd>
+                    <dt>S</dt>
+                    <dd>Focus the search field</dd>
+                    <dt>&larrb;</dt>
+                    <dd>Move up in search results</dd>
+                    <dt>&rarrb;</dt>
+                    <dd>Move down in search results</dd>
+                    <dt>&#9166;</dt>
+                    <dd>Go to active search result</dd>
+                </dl>
+            </div>
+
+            <div class="infos">
+                <h2>Search Tricks</h2>
+
+                <p>
+                    Prefix searches with a type followed by a colon (e.g.
+                    <code>fn:</code>) to restrict the search to a given type.
+                </p>
+
+                <p>
+                    Accepted types are: <code>fn</code>, <code>mod</code>,
+                    <code>struct</code>, <code>enum</code>,
+                    <code>trait</code>, <code>type</code>, <code>macro</code>,
+                    and <code>const</code>.
+                </p>
+
+                <p>
+                    Search functions by type signature (e.g.
+                    <code>vec -> usize</code>)
+                </p>
+            </div>
+        </div>
+    </aside>
+
+    
+
+    <script>
+        window.rootPath = "../";
+        window.currentCrate = "travis_after_all";
+        window.playgroundUrl = "";
+    </script>
+    <script src="../jquery.js"></script>
+    <script src="../main.js"></script>
+    
+    <script defer src="../search-index.js"></script>
+</body>
+</html>

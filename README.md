@@ -32,7 +32,7 @@ This installs the tool and executes as an `after_success` hook:
 before_script:
   - |
      export PATH=$HOME/.cargo/bin:$PATH:$PATH &&
-     cargo install --git https://github.com/badboy/travis-after-all-rs
+     cargo install --force travis-after-all
 
 after_success:
   - travis-after-all && echo "All fine, let's publish"

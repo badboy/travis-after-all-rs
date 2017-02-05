@@ -14,8 +14,10 @@ homepage = "https://github.com/badboy/travis-after-all-rs"
 repository = "https://github.com/badboy/travis-after-all-rs"
 
 [dependencies]
-curl = "0.2.16"
-rustc-serialize = "0.3.16"
+reqwest = "0.4.0"
+serde = "0.9.6"
+serde_derive = "0.9.6"
+serde_json = "0.9.5"
 
 [[bin]]
 name = "travis-after-all"

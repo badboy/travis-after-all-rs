@@ -1,4 +1,4 @@
-# v2.0.0 (unreleased)
+# v2.0.0 (2017-02-05)
 
 Switch from `curl` & `rustc_serialize` to `reqwest` & `serde`
 

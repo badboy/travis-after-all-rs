@@ -40,15 +40,18 @@
 //! ```
 #![deny(missing_docs)]
 
-extern crate curl;
-extern crate rustc_serialize;
+extern crate reqwest;
+extern crate serde;
+#[macro_use]
+extern crate serde_derive;
+extern crate serde_json;
 
 use std::thread;
 use std::time::Duration;
 use std::env;
 use std::str::FromStr;
-use rustc_serialize::json;
-use curl::http;
+use reqwest::{RedirectPolicy, StatusCode};
+use reqwest::header::UserAgent;
 
 mod error;
 mod matrix;
@@ -113,19 +116,18 @@ impl Build {
     /// Fetch the build matrix for the current build
     pub fn build_matrix(&self) -> Result<Matrix, Error> {
         let url = format!("{}/builds/{}", self.travis_api_url, self.build_id);
-        let res = http::handle()
-            .get(url)
-            .follow_redirects(true)
-            .header("User-Agent", USER_AGENT)
-            .exec()
+        let mut client = reqwest::Client::new().unwrap();
+        client.redirect(RedirectPolicy::limited(5));
+        let mut res = client.get(&url)
+            .header(UserAgent(USER_AGENT.to_string()))
+            .send()
             .unwrap();
 
-        if res.get_code() == 404 {
+        if *res.status() == StatusCode::NotFound {
             return Err(Error::BuildNotFound);
         }
 
-        let body = String::from_utf8(res.move_body()).unwrap();
-        Ok(try!(json::decode(&body)))
+        res.json().map_err(|e| From::from(e))
     }
 
     /// Wait for all non-leader jobs to finish

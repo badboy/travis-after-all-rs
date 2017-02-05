@@ -3,7 +3,7 @@ use std::error;
 use std::env::VarError;
 use std::error::Error as StdError;
 use std::num::ParseIntError;
-use rustc_serialize::json::DecoderError;
+use reqwest;
 
 /// All possible error cases
 #[derive(Debug)]
@@ -62,8 +62,8 @@ impl From<ParseIntError> for Error {
     }
 }
 
-impl From<DecoderError> for Error {
-    fn from(err: DecoderError) -> Error {
+impl From<reqwest::Error> for Error {
+    fn from(err: reqwest::Error) -> Error {
         Error::Generic(err.description().into())
     }
 }

@@ -1,3 +1,10 @@
+# v2.0.0 (unreleased)
+
+Switch from `curl` & `rustc_serialize` to `reqwest` & `serde`
+
+This makes it far more future proof and additionally does not require
+openssl on Mac or Windows!
+
 # v1.0.0 (2016-02-02)
 
 The missing `after_all_success` hook for Travis

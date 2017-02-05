@@ -1,5 +1,5 @@
 /// A single job and relevant information
-#[derive(Debug, RustcDecodable, RustcEncodable)]
+#[derive(Debug, Serialize, Deserialize)]
 pub struct MatrixElement {
     finished_at: Option<String>,
     result: Option<u32>,
@@ -8,7 +8,7 @@ pub struct MatrixElement {
 }
 
 /// A list of jobs
-#[derive(Debug, RustcDecodable, RustcEncodable)]
+#[derive(Debug, Serialize, Deserialize)]
 pub struct Matrix {
     id: u32,
     matrix: Vec<MatrixElement>,

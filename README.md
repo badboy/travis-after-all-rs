@@ -1,5 +1,14 @@
 # travis-after-all
 
+---
+
+Travis recently introduced Build Stages, which are far better than this hack.
+`travis-after-all` is therefore deprecated and unmaintained.
+
+See [Gain more control over your delivery process with Build Stages](https://blog.travis-ci.com/2017-05-11-introducing-build-stages) for more.
+
+---
+
 [![Build Status](https://travis-ci.org/badboy/travis-after-all-rs.svg?branch=master)](https://travis-ci.org/badboy/travis-after-all-rs)
 [![crates.io](http://meritbadge.herokuapp.com/travis-after-all)](https://crates.io/crates/travis-after-all)
 
